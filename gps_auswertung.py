@@ -71,6 +71,7 @@ class GPSAuswertung:
         self.df[self.lat_col] = pd.to_numeric(self.df[self.lat_col], errors="coerce")
         self.df[self.lon_col] = pd.to_numeric(self.df[self.lon_col], errors="coerce")
         self.df[self.ele_col] = pd.to_numeric(self.df[self.ele_col], errors="coerce")
+        self.df[self.temp_col] = pd.to_numeric(self.df[self.temp_col], errors="coerce")
         return self.df
 
     def geschwindigkeit(self):
