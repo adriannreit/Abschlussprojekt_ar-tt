@@ -1,6 +1,7 @@
 ﻿from pathlib import Path
 import numpy as np
 import pandas as pd
+from geo_utils import haversine_distance, distance_3d, steigungswinkel
 
 
 class GPSAuswertung:
@@ -79,25 +80,17 @@ class GPSAuswertung:
         if self.df is None or None in (self.lat_col, self.lon_col, self.ele_col, self.time_col):
             raise ValueError("Daten müssen mit prepare_data() vorbereitet werden, bevor geschwindigkeit() aufgerufen wird.")
 
-        self.df["delta_t"] = self.df[self.time_col].diff().dt.total_seconds().fillna(0)
+        self.df["delta_t"] = (self.df[self.time_col].shift(-1) - self.df[self.time_col]).dt.total_seconds().fillna(0)
 
-        lat1 = np.radians(self.df[self.lat_col])
-        lon1 = np.radians(self.df[self.lon_col])
-        lat2 = np.radians(self.df[self.lat_col].shift(-1))
-        lon2 = np.radians(self.df[self.lon_col].shift(-1))
+        lat1 = self.df[self.lat_col]
+        lon1 = self.df[self.lon_col]
+        lat2 = self.df[self.lat_col].shift(-1)
+        lon2 = self.df[self.lon_col].shift(-1)
 
-        dlat = lat2 - lat1
-        dlon = lon2 - lon1
 
-        a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
-        a = np.clip(a, 0, 1) 
-
-        self.df["h_distance"] = 2 * 6371000 * np.arcsin(np.sqrt(a))
-        self.df["d_ele"] = self.df[self.ele_col].shift(-1) - self.df[self.ele_col]
-
-        self.df["distance"] = np.sqrt(self.df["h_distance"]**2 + self.df["d_ele"]**2)
-        self.df["distance"] = self.df["distance"].fillna(0)
-
+        self.df["h_distance"] = haversine_distance(lat1, lon1, lat2, lon2).fillna(0)
+        self.df["d_ele"] = (self.df[self.ele_col].shift(-1) - self.df[self.ele_col]).fillna(0)
+        self.df["distance"] = distance_3d(self.df["h_distance"], self.df["d_ele"]).fillna(0)
         self.df["geschw._m/s"] = np.where(self.df["delta_t"] > 0, self.df["distance"] / self.df["delta_t"], 0)
         self.df["geschw._km/h"] = self.df["geschw._m/s"] * 3.6
 
@@ -110,7 +103,7 @@ class GPSAuswertung:
         if self.df is None or "geschw._m/s" not in self.df.columns:
             raise ValueError("Daten müssen mit geschwindigkeit() vorbereitet werden, bevor beschleunigung() aufgerufen wird.")
 
-        self.df["delta_v"] = self.df["geschw._m/s"].diff().fillna(0)
+        self.df["delta_v"] = (self.df["geschw._m/s"].shift(-1) - self.df["geschw._m/s"]).fillna(0)
         self.df["beschleunigung"] = np.where(self.df["delta_t"] > 0, self.df["delta_v"] / self.df["delta_t"], 0)
 
         return self.df
@@ -122,7 +115,7 @@ class GPSAuswertung:
         if self.df is None or "d_ele" not in self.df.columns or "h_distance" not in self.df.columns:
             raise ValueError("Daten konnten nicht ausgelesen oder vorberitet werden.")
             
-        self.df["steigung"]= np.arctan(self.df["d_ele"]/ + self.df["h_distance"])
+        self.df["steigung"]= steigungswinkel(self.df["d_ele"], self.df["h_distance"])
         return self.df
 
 
