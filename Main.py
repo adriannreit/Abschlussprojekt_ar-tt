@@ -1,8 +1,10 @@
 from gps_auswertung import GPSAuswertung
 from plotting_utils import plot_geschwindigkeit_zeit, plot_beschleunigung_zeit, plot_steigung_zeit
 import matplotlib.pyplot as plt
+from kraft_Leistungsberechnung import Kraftberechnung
 
 gps = GPSAuswertung("final_project_input_data.csv")
+Kb = Kraftberechnung("final_project_input_data.csv")
 
 def geschwindigkeit_plt():
     df = gps.geschwindigkeit()

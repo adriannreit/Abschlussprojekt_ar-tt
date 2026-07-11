@@ -1,7 +1,7 @@
 ﻿from pathlib import Path
 import numpy as np
 import pandas as pd
-from geo_utils import haversine_distance, distance_3d, steigungswinkel
+from geo_utils import haversine_distance, distance_3d, steigungswinkel, himmelsrichtung
 
 
 class GPSAuswertung:
@@ -118,6 +118,32 @@ class GPSAuswertung:
             
         self.df["steigung"]= steigungswinkel(self.df["d_ele"], self.df["h_distance"])
         return self.df
+    
+    def himmelsrichtung(self):
+        """Berechnet Himmelsrichtung und Azimut für alle Streckenabschnitte."""
+        if self.df is None or None in (self.lat_col, self.lon_col):
+            self.prepare_data()
+
+        if self.df is None or None in (self.lat_col, self.lon_col):
+            raise ValueError("Daten müssen mit prepare_data() vorbereitet werden, bevor himmelsrichtung() aufgerufen wird.")
+        
+        directions_list = [None] * len(self.df)
+        azimuth_list = [None] * len(self.df)
+
+        for i in range(len(self.df) - 1):
+            lat1 = self.df[self.lat_col].iloc[i]
+            lon1 = self.df[self.lon_col].iloc[i]
+            lat2 = self.df[self.lat_col].iloc[i + 1]
+            lon2 = self.df[self.lon_col].iloc[i + 1]
+
+            directions, azimuth_deg = himmelsrichtung(lat1, lon1, lat2, lon2)
+            directions_list[i] = directions
+            azimuth_list[i] = azimuth_deg
+
+        self.df["himmelsrichtung"] = directions_list
+        self.df["azimuth_deg"] = azimuth_list
+
+        return self.df
 
 
 if __name__ == "__main__":
@@ -125,4 +151,6 @@ if __name__ == "__main__":
     df = gps.geschwindigkeit()
     #df = gps.beschleunigung()
     #df = gps.steigung()
-    print(df[["h_distance","geschw._m/s"]].head(10))
+    df = gps.himmelsrichtung()
+    print(df[["h_distance","geschw._m/s", "himmelsrichtung", "azimuth_deg"]].head(10))
+

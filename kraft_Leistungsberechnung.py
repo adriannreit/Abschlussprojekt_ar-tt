@@ -3,12 +3,14 @@ from gps_auswertung import GPSAuswertung
 from luftdruckberechnung import rho
 
 class Kraftberechnung(GPSAuswertung):
-    def __init__(self, gps_data , masse_kg):
+    def __init__(self, gps_data , masse_kg: float = 100, cW: float= 0.8, rad: float = 29)-> None:
         super().__init__(gps_data)
         self.masse_kg = masse_kg
+        self.cW = cW
+        self.rad = rad * 0.0254/2
         self.df = None
 
-    def luftwiderstandskraft(self, cW = 0.8):
+    def luftwiderstandskraft(self):
         if self.df is None or "geschw._m/s" not in self.df.columns:
             self.geschwindigkeit()
 
@@ -17,7 +19,7 @@ class Kraftberechnung(GPSAuswertung):
         
         p = rho(self.df[self.ele_col], self.df[self.temp_col])
 
-        self.df["Luftwiderstandskraft"] = 0.5 * p * cW * (self.df["geschw._m/s"] ** 2)
+        self.df["Luftwiderstandskraft"] = 0.5 * p * self.cW * (self.df["geschw._m/s"] ** 2)
         return self.df
     
     def kraft(self):
@@ -42,13 +44,13 @@ class Kraftberechnung(GPSAuswertung):
         self.df["Leistung"] = self.df["Kraft"] * self.df["geschw._m/s"]
         return self.df
     
-    def drehmoment(self, rad = 0.368):
+    def drehmoment(self,):
         if self.df is None or "Kraft" not in self.df.columns:
             self.kraft()
 
         if self.df is None or "Kraft" not in self.df.columns:
             raise ValueError("Daten müssen mit kraft() vorbereitet werden, bevor drehmoment() aufgerufen wird.")
-        self.df["Drehmoment"] = self.df["Kraft"] * rad
+        self.df["Drehmoment"] = self.df["Kraft"] * self.rad
         return self.df
     
     def motorstrom(self, Motorstromkonstante = 0.35):

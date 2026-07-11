@@ -25,3 +25,17 @@ def steigungswinkel(d_ele, h_distance):
     with np.errstate(divide="ignore", invalid="ignore"):
         winkel = np.arctan(np.where(h_distance != 0, d_ele / h_distance, 0.0))
     return np.nan_to_num(winkel, nan=0.0, posinf=0.0, neginf=0.0)
+
+def himmelsrichtung(lat1, lon1, lat2, lon2):
+    """Berechnet die Himmelsrichtung (Azimut) zwischen zwei GPS-Punkten in Grad."""
+    lat1, lon1, lat2, lon2 = map(np.radians, (lat1, lon1, lat2, lon2))
+    dlon = lon2 - lon1
+
+    x = np.sin(dlon) * np.cos(lat2)
+    y = np.cos(lat1) * np.sin(lat2) - np.sin(lat1) * np.cos(lat2) * np.cos(dlon)
+
+    azimuth_rad = np.arctan2(x, y)
+    azimuth_deg = (np.degrees(azimuth_rad) + 360) % 360
+    directions = ["N", "NNO", "NO", "ONO", "O", "OSO", "SO", "SSO", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+    index = int((azimuth_deg + 11.25) % 360 / 22.5)
+    return directions[index], azimuth_deg
