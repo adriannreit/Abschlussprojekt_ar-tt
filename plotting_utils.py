@@ -87,3 +87,30 @@ def plot_hoehenprofil_distanz(df, distance_col="distance", ele_col="ele"):
     ax.grid(True, alpha=0.3)
 
     return ax
+
+def plot_leistung_zeit(df, time_col="time", leistung_col="Leistung"):
+    """Plottet die Leistung über die Zeit.
+ 
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Ergebnis von GPSAuswertung.beschleunigung(). Muss `time_col` und `leistung_col` enthalten.
+    time_col : str
+        Name der Zeitspalte (muss datetime-artig sein, siehe prepare_data()).
+    leistung_col : str
+        Name der zu plottenden Leistungsspalte (in W).
+ 
+    Returns
+    -------
+    matplotlib.axes.Axes
+    """
+    _, ax = plt.subplots(figsize=(10, 4))
+    elapsed_minutes = (df[time_col] - df[time_col].iloc[0]).dt.total_seconds() / 60
+    ax.plot(elapsed_minutes, df[leistung_col], linewidth=1)
+    ax.set_xlabel("Fahrtzeit [min]")
+    ax.set_ylabel(leistung_col)
+    ax.set_title("Leistung über Zeit [W]")
+    ax.grid(True, alpha=0.3)
+    ax.figure.autofmt_xdate()
+
+    return ax

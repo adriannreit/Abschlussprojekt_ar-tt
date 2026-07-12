@@ -1,5 +1,5 @@
 from gps_auswertung import GPSAuswertung
-from plotting_utils import plot_geschwindigkeit_zeit, plot_beschleunigung_zeit, plot_hoehenprofil_distanz
+import plotting_utils 
 import matplotlib.pyplot as plt
 from kraft_Leistungsberechnung import Kraftberechnung
 
@@ -8,15 +8,22 @@ Kb = Kraftberechnung("final_project_input_data.csv")
 
 def geschwindigkeit_plt():
     df = gps.geschwindigkeit()
-    plot_geschwindigkeit_zeit(df)
+    plotting_utils.plot_geschwindigkeit_zeit(df)
 
 def beschleunigung_plt():
     df = gps.beschleunigung()
-    plot_beschleunigung_zeit(df)
+    plotting_utils.plot_beschleunigung_zeit(df)
 
 def steigung_plt():
     df = gps.steigung()
-    plot_hoehenprofil_distanz(df)
+    plotting_utils.plot_hoehenprofil_distanz(df)
 
-geschwindigkeit_plt(), beschleunigung_plt(), steigung_plt()
-plt.show()
+def leistung_plt():
+    df = Kb.leistung()
+    plotting_utils.plot_leistung_zeit(df)
+
+
+geschwindigkeit_plt(), beschleunigung_plt(), steigung_plt(), leistung_plt()
+plt.show(block=False)
+input("Enter drücken zum Schließen aller Plots...")
+plt.close("all")
