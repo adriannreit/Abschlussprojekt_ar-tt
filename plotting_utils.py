@@ -19,8 +19,9 @@ def plot_geschwindigkeit_zeit(df, time_col="time", speed_col="geschw._km/h"):
     matplotlib.axes.Axes
     """
     _, ax = plt.subplots(figsize=(10, 4))
-    ax.plot(df[time_col], df[speed_col], linewidth=1)
-    ax.set_xlabel("Zeit")
+    elapsed_minutes = (df[time_col] - df[time_col].iloc[0]).dt.total_seconds() / 60
+    ax.plot(elapsed_minutes, df[speed_col], linewidth=1)
+    ax.set_xlabel("Fahrtzeit [min]")
     ax.set_ylabel(speed_col)
     ax.set_title("Geschwindigkeit über Zeit")
     ax.grid(True, alpha=0.3)
@@ -46,9 +47,9 @@ def plot_beschleunigung_zeit(df, time_col="time", accel_col="beschleunigung"):
     """
     _, ax = plt.subplots(figsize=(10, 4))
  
-    ax.plot(df[time_col], df[accel_col], linewidth=1, color="tab:orange")
-    ax.axhline(0, color="grey", linewidth=0.8, linestyle="--")
-    ax.set_xlabel("Zeit")
+    elapsed_minutes = (df[time_col] - df[time_col].iloc[0]).dt.total_seconds() / 60
+    ax.plot(elapsed_minutes, df[accel_col], linewidth=1)
+    ax.set_xlabel("Fahrtzeit [min]")
     ax.set_ylabel(f"{accel_col} [m/s²]")
     ax.set_title("Beschleunigung über Zeit")
     ax.grid(True, alpha=0.3)
@@ -57,48 +58,59 @@ def plot_beschleunigung_zeit(df, time_col="time", accel_col="beschleunigung"):
     return ax
  
  
-def plot_steigung_zeit(df, time_col="time", steigung_col="steigung", unit="prozent"):
-    """Plottet die Steigung über die Zeit.
+def plot_hoehenprofil_distanz(df, distance_col="distance", ele_col="ele"):
+    """Plottet das Höhenprofil über die zurückgelegte Distanz.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Ergebnis von GPSAuswertung.geschwindigkeit() (oder .beschleunigung()/.steigung()).
+        Muss `distance_col` und `ele_col` enthalten.
+    distance_col : str
+        Name der Segment-Distanzspalte (wird intern kumuliert für "Distanz seit Start").
+    ele_col : str
+        Name der Höhenspalte in Metern (Standard aus prepare_data(): "ele").
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+    """
+    kumulierte_distanz = df[distance_col].cumsum()
+
+    _, ax = plt.subplots(figsize=(10, 4))
+
+    ax.plot(kumulierte_distanz, df[ele_col], linewidth=1, color="tab:brown")
+    ax.fill_between(kumulierte_distanz, df[ele_col], df[ele_col].min(), alpha=0.15, color="tab:brown")
+    ax.set_xlabel("Distanz [m]")
+    ax.set_ylabel("Höhe [m]")
+    ax.set_title("Höhenprofil")
+    ax.grid(True, alpha=0.3)
+
+    return ax
+
+def plot_leistung_zeit(df, time_col="time", leistung_col="Leistung"):
+    """Plottet die Leistung über die Zeit.
  
     Parameters
     ----------
     df : pandas.DataFrame
-        Ergebnis von GPSAuswertung.steigung(). Muss `time_col` und `steigung_col` enthalten.
+        Ergebnis von GPSAuswertung.beschleunigung(). Muss `time_col` und `leistung_col` enthalten.
     time_col : str
         Name der Zeitspalte (muss datetime-artig sein, siehe prepare_data()).
-    steigung_col : str
-        Name der Steigungsspalte. Wird als Winkel in rad erwartet (so wie sie
-        von geo_utils.steigungswinkel() geliefert wird).
-    unit : {"prozent", "grad", "rad"}
-        Einheit, in der die Steigung dargestellt werden soll. 
+    leistung_col : str
+        Name der zu plottenden Leistungsspalte (in W).
  
     Returns
     -------
     matplotlib.axes.Axes
     """
-    if unit == "prozent":
-        werte = np.tan(df[steigung_col]) * 100
-        ylabel = "Steigung [%]"
-    elif unit == "grad":
-        werte = np.degrees(df[steigung_col])
-        ylabel = "Steigung [°]"
-    elif unit == "rad":
-        werte = df[steigung_col]
-        ylabel = "Steigung [rad]"
-    else:
-        raise ValueError(f"Unbekannte unit: {unit!r} (erlaubt: 'prozent', 'grad', 'rad')")
- 
-    
     _, ax = plt.subplots(figsize=(10, 4))
- 
-    ax.plot(df[time_col], werte, linewidth=1, color="tab:green")
-    ax.axhline(0, color="grey", linewidth=0.8, linestyle="--")
-    ax.set_xlabel("Zeit")
-    ax.set_ylabel(ylabel)
-    ax.set_title("Steigung über Zeit")
+    elapsed_minutes = (df[time_col] - df[time_col].iloc[0]).dt.total_seconds() / 60
+    ax.plot(elapsed_minutes, df[leistung_col], linewidth=1)
+    ax.set_xlabel("Fahrtzeit [min]")
+    ax.set_ylabel(leistung_col)
+    ax.set_title("Leistung über Zeit [W]")
     ax.grid(True, alpha=0.3)
     ax.figure.autofmt_xdate()
- 
+
     return ax
-
-
