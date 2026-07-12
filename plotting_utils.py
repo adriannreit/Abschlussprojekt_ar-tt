@@ -19,8 +19,9 @@ def plot_geschwindigkeit_zeit(df, time_col="time", speed_col="geschw._km/h"):
     matplotlib.axes.Axes
     """
     _, ax = plt.subplots(figsize=(10, 4))
-    ax.plot(df[time_col], df[speed_col], linewidth=1)
-    ax.set_xlabel("Zeit")
+    elapsed_minutes = (df[time_col] - df[time_col].iloc[0]).dt.total_seconds() / 60
+    ax.plot(elapsed_minutes, df[speed_col], linewidth=1)
+    ax.set_xlabel("Fahrtzeit [min]")
     ax.set_ylabel(speed_col)
     ax.set_title("Geschwindigkeit über Zeit")
     ax.grid(True, alpha=0.3)
@@ -46,9 +47,9 @@ def plot_beschleunigung_zeit(df, time_col="time", accel_col="beschleunigung"):
     """
     _, ax = plt.subplots(figsize=(10, 4))
  
-    ax.plot(df[time_col], df[accel_col], linewidth=1, color="tab:orange")
-    ax.axhline(0, color="grey", linewidth=0.8, linestyle="--")
-    ax.set_xlabel("Zeit")
+    elapsed_minutes = (df[time_col] - df[time_col].iloc[0]).dt.total_seconds() / 60
+    ax.plot(elapsed_minutes, df[accel_col], linewidth=1)
+    ax.set_xlabel("Fahrtzeit [min]")
     ax.set_ylabel(f"{accel_col} [m/s²]")
     ax.set_title("Beschleunigung über Zeit")
     ax.grid(True, alpha=0.3)
