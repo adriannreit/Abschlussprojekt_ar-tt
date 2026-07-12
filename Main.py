@@ -1,5 +1,5 @@
 from gps_auswertung import GPSAuswertung
-from plotting_utils import plot_geschwindigkeit_zeit, plot_beschleunigung_zeit, plot_steigung_zeit
+from plotting_utils import plot_geschwindigkeit_zeit, plot_beschleunigung_zeit, plot_hoehenprofil_distanz
 import matplotlib.pyplot as plt
 from kraft_Leistungsberechnung import Kraftberechnung
 
@@ -16,7 +16,7 @@ def beschleunigung_plt():
 
 def steigung_plt():
     df = gps.steigung()
-    plot_steigung_zeit(df)
+    plot_hoehenprofil_distanz(df)
 
 geschwindigkeit_plt(), beschleunigung_plt(), steigung_plt()
 plt.show()
