@@ -3,7 +3,7 @@ from gps_auswertung import GPSAuswertung
 from luftdruckberechnung import rho
 
 class Kraftberechnung(GPSAuswertung):
-    def __init__(self, gps_data , masse_kg: float = 100, cW: float= 0.8, rad: float = 29)-> None:
+    def __init__(self, gps_data , masse_kg: float = 80, cW: float= 0.5625, rad: float = 27)-> None:
         super().__init__(gps_data)
         self.masse_kg = masse_kg
         self.cW = cW
