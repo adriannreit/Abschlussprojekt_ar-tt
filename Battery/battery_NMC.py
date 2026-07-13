@@ -1,8 +1,9 @@
-from battery_base import BatteryBase
+from .battery_base import BatteryBase
 import numpy as np
 
 class Battery_NMC(BatteryBase):
-
+    """repräsentiert das gesamte Pack aus n_series×n_parallel Zellen"""
+    
     cell_r_mOhm = 7.0
     # OCV-Kennlinie
     cell_soc_table = np.array([
