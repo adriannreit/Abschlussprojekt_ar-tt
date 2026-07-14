@@ -1,7 +1,8 @@
-from battery_base import BatteryBase
+from .battery_base import BatteryBase
 import numpy as np
 
 class Battery_LiPo(BatteryBase):
+    """repräsentiert das gesamte Pack aus n_series×n_parallel Zellen"""
 
     cell_r_mOhm = 8.0
     # OCV-Kennlinie 

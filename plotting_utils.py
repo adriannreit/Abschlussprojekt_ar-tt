@@ -114,3 +114,51 @@ def plot_leistung_zeit(df, time_col="time", leistung_col="Leistung"):
     ax.figure.autofmt_xdate()
 
     return ax
+
+def plot_soc_zeit(zeit, soc_verlauf, battery_typ):
+    """Plottet den State of Charge (SoC) über die Zeit.
+
+    Parameters
+    ----------
+    zeit : array-like
+        Zeitwerte (z.B. Fahrtzeit in Minuten seit Start).
+    soc_verlauf : array-like
+        SoC-Werte im Bereich [0, 1], z.B. BatterySimulator.soc_verlauf.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+    """
+    _, ax = plt.subplots(figsize=(10, 4))
+
+    ax.plot(zeit, np.array(soc_verlauf) * 100, linewidth=1, color="tab:red")
+    ax.set_xlabel("Fahrtzeit [min]")
+    ax.set_ylabel("SoC [%]")
+    ax.set_title(f"{battery_typ} Ladezustand (SoC) über Zeit")
+    ax.grid(True, alpha=0.3)
+
+    return ax
+
+def plot_spannung_zeit(zeit, spannung_verlauf, battery_typ):
+    """Plottet den State of Charge (SoC) über die Zeit.
+
+    Parameters
+    ----------
+    zeit : array-like
+        Zeitwerte (z.B. Fahrtzeit in Minuten seit Start).
+    spannung_verlauf : array-like
+        Spannung-Werte über die Fahrt
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+    """
+    _, ax = plt.subplots(figsize=(10, 4))
+
+    ax.plot(zeit, np.array(spannung_verlauf) * 100, linewidth=1, color="tab:red")
+    ax.set_xlabel("Fahrtzeit [min]")
+    ax.set_ylabel("Spannung [V]")
+    ax.set_title(f"{battery_typ} Spannungszustand über Zeit")
+    ax.grid(True, alpha=0.3)
+
+    return ax
