@@ -1,7 +1,7 @@
 ﻿from pathlib import Path
 import numpy as np
 import pandas as pd
-from geo_utils import haversine_distance, distance_3d, steigungswinkel, himmelsrichtung
+from geo_utils import haversine_distance, distance_3d, steigungswinkel, himmelsrichtung, moving_average
 
 
 class GPSAuswertung:
@@ -93,6 +93,7 @@ class GPSAuswertung:
         self.df["d_ele"] = (self.df[self.ele_col].shift(-1) - self.df[self.ele_col]).fillna(0)
         self.df["distance"] = distance_3d(self.df["h_distance"], self.df["d_ele"]).fillna(0)
         self.df["geschw._m/s"] = np.where(self.df["delta_t"] > 0, self.df["distance"] / self.df["delta_t"], 0)
+        self.df["geschw._m/s"]= moving_average(self.df["geschw._m/s"], window_size=5)
         self.df["geschw._km/h"] = self.df["geschw._m/s"] * 3.6
 
         return self.df
@@ -106,6 +107,7 @@ class GPSAuswertung:
 
         self.df["delta_v"] = (self.df["geschw._m/s"].shift(-1) - self.df["geschw._m/s"]).fillna(0)
         self.df["beschleunigung"] = np.where(self.df["delta_t"] > 0, self.df["delta_v"] / self.df["delta_t"], 0)
+        self.df["beschleunigung"]= moving_average(self.df["beschleunigung"], window_size=5)
 
         return self.df
 
@@ -117,6 +119,8 @@ class GPSAuswertung:
             raise ValueError("Daten konnten nicht ausgelesen oder vorberitet werden.")
             
         self.df["steigung"]= steigungswinkel(self.df["d_ele"], self.df["h_distance"])
+        self.df["steigung"]= moving_average(self.df["steigung"], window_size=5)
+
         return self.df
     
     def himmelsrichtung(self):
@@ -152,5 +156,5 @@ if __name__ == "__main__":
     #df = gps.beschleunigung()
     #df = gps.steigung()
     df = gps.himmelsrichtung()
-    print(df[["h_distance","geschw._m/s", "himmelsrichtung", "azimuth_deg"]].head(10))
+    print(df[["h_distance","geschw._m/s","ggeschw._m/s", "himmelsrichtung", "azimuth_deg"]].head(30))
 

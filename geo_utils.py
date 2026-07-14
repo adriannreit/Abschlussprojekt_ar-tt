@@ -1,5 +1,6 @@
 """Geometrische Hilfsfunktionen zur Berechnung der Geschwindigkeit, Distanz und Steigungswinkel anhand von GPS-Daten"""
 import numpy as np
+import pandas as pd
 
 earth_radius_m = 6371000
 
@@ -39,3 +40,8 @@ def himmelsrichtung(lat1, lon1, lat2, lon2):
     directions = ["N", "NNO", "NO", "ONO", "O", "OSO", "SO", "SSO", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
     index = int((azimuth_deg + 11.25) % 360 / 22.5)
     return directions[index], azimuth_deg
+
+
+def moving_average(values: pd.Series, window_size: int = 5) -> pd.Series:
+    """Berechnet den gleitenden Durchschnitt über eine gegebene Fenstergröße."""
+    return values.rolling(window=window_size, min_periods=1).mean()
