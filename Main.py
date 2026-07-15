@@ -42,7 +42,7 @@ def battery_plt(battery, battery_typ: str):
     plotting_utils.plot_spannung_zeit(sim.zeit_verlauf, sim.spannung_verlauf, battery_typ)
 
 
-battery_plt(Battery_LiPo(capacity_nom_Ah_cell=150.0), "LiPo"), battery_plt(Battery_NMC(capacity_nom_Ah_cell=150.0), "NMC")
+battery_plt(Battery_LiPo(capacity_nom_Ah_cell= 30.0), "LiPo"), battery_plt(Battery_NMC(capacity_nom_Ah_cell=30.0), "NMC")
 
 plt.show(block=False)
 input("Enter drücken zum Schließen der Plots...")

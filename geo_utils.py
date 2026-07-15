@@ -1,6 +1,7 @@
 """Geometrische Hilfsfunktionen zur Berechnung der Geschwindigkeit, Distanz und Steigungswinkel anhand von GPS-Daten"""
 import numpy as np
 import pandas as pd
+from meteostat import Point, hourly, Station
 
 earth_radius_m = 6371000
 
@@ -45,3 +46,79 @@ def himmelsrichtung(lat1, lon1, lat2, lon2):
 def moving_average(values: pd.Series, window_size: int = 5) -> pd.Series:
     """Berechnet den gleitenden Durchschnitt über eine gegebene Fenstergröße."""
     return values.rolling(window=window_size, min_periods=1).mean()
+
+def wetter_daten_auslesen(lat, lon, timestamp):
+    """Liest Wetterdaten für einen einzelnen GPS-Punkt und einen einzelnen Zeitpunkt aus."""
+    location = Point(float(lat), float(lon))
+
+    if pd.isna(timestamp):
+        return {"wspd": None, "wdir": None}
+
+    if hasattr(timestamp, "to_pydatetime"):
+        dt_start = timestamp.to_pydatetime()
+    else:
+        dt_start = pd.to_datetime(timestamp).to_pydatetime()
+
+    if getattr(dt_start, "tzinfo", None) is not None:
+        dt_start = dt_start.replace(tzinfo=None)
+
+    dt_end = dt_start + pd.Timedelta(hours=1).to_pytimedelta()
+
+    data = hourly(location, dt_start, dt_end)
+    fetched = data.fetch()
+
+    if fetched is None or getattr(fetched, "empty", True):
+        return {"wspd": None, "wdir": None}
+
+    row = fetched.iloc[0]
+    return {"wspd": row.get("wspd"), "wdir": row.get("wdir")}
+
+
+def debug_wetterabfrage(lat, lon, timestamp):
+    """Debug-Funktion zur Wetterdatenabfrage mit Meteostat."""
+    print("\n" + "="*50)
+    print("DEBUG: Wetterabfrage gestartet")
+    print("="*50)
+
+    # Standort definieren
+    location = Point(float(lat), float(lon))
+    print(f"Standort: lat={lat}, lon={lon}")
+
+    # Timestamp konvertieren
+    if hasattr(timestamp, "to_pydatetime"):
+        dt_start = timestamp.to_pydatetime()
+    else:
+        dt_start = pd.to_datetime(timestamp).to_pydatetime()
+
+    if getattr(dt_start, "tzinfo", None) is not None:
+        dt_start = dt_start.replace(tzinfo=None)
+    print(f"Startzeitpunkt: {dt_start}")
+
+    # Endzeitpunkt (1 Stunde später)
+    dt_end = dt_start + pd.Timedelta(hours=1).to_pytimedelta()
+    print(f"Endzeitpunkt: {dt_end}")
+
+    # Wetterdaten abrufen
+    fetched = None  # Initialisiere fetched mit None
+    try:
+        data = hourly(location, dt_start, dt_end)
+        fetched = data.fetch()
+        print("\nDaten erfolgreich abgerufen.")
+    except Exception as e:
+        print(f"\nFehler bei der Wetterdatenabfrage: {e}")
+
+    # Prüfe, ob Daten vorhanden sind
+    if fetched is not None and not fetched.empty:
+        print("\nWetterdaten:")
+        print(fetched[["temp", "windspeed", "winddir"]].head())
+    else:
+        print("\nKeine Wetterdaten für den Zeitraum gefunden oder Abfrage fehlgeschlagen.")
+
+    print("\n" + "="*50)
+    print("DEBUG: Wetterabfrage beendet")
+    print("="*50 + "\n")
+    return fetched
+
+if __name__ == "__main__":
+    debug_wetterabfrage(47.583114, 12.170826, pd.to_datetime("2024-08-23T16:21:14.187Z"))
+   

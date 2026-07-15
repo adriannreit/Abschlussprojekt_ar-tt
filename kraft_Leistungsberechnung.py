@@ -53,7 +53,7 @@ class Kraftberechnung(GPSAuswertung):
         self.df["Drehmoment"] = self.df["Kraft"] * self.rad
         return self.df
     
-    def motorstrom(self, Motorstromkonstante = 0.35):
+    def motorstrom(self, Motorstromkonstante = 1.5):
         if self.df is None or "Drehmoment" not in self.df.columns:
             self.drehmoment()
 

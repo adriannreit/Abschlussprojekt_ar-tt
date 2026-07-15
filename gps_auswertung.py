@@ -1,7 +1,7 @@
 ﻿from pathlib import Path
 import numpy as np
 import pandas as pd
-from geo_utils import haversine_distance, distance_3d, steigungswinkel, himmelsrichtung, moving_average
+from geo_utils import haversine_distance, distance_3d, steigungswinkel, himmelsrichtung, moving_average, wetter_daten_auslesen
 
 
 class GPSAuswertung:
@@ -148,7 +148,31 @@ class GPSAuswertung:
         self.df["azimuth_deg"] = azimuth_list
 
         return self.df
+    
+    def wind(self):
+        if self.df is None or None in (self.lat_col, self.lon_col, self.time_col):
+            self.prepare_data()
 
+        if self.df is None or None in (self.lat_col, self.lon_col, self.time_col):
+            raise ValueError("Daten müssen mit prepare_data() vorbereitet werden.")
+
+        wind_geschw = []
+        wind_richtung_dg = []
+
+        for i in range(len(self.df)):
+            lat = self.df[self.lat_col].iloc[i]
+            lon = self.df[self.lon_col].iloc[i]
+            timestamp = self.df[self.time_col].iloc[i]
+
+            data = wetter_daten_auslesen(lat, lon, timestamp)
+            wind_geschw.append(np.nan if data.get("wspd") is None else data["wspd"])
+            wind_richtung_dg.append(np.nan if data.get("wdir") is None else data["wdir"])
+
+        self.df = self.df.copy()
+        self.df["wind_geschw"] = pd.Series(wind_geschw, index=self.df.index)
+        self.df["wind_richtung_dg"] = pd.Series(wind_richtung_dg, index=self.df.index)
+
+        return self.df
 
 if __name__ == "__main__":
     gps = GPSAuswertung("final_project_input_data.csv")
@@ -156,5 +180,6 @@ if __name__ == "__main__":
     #df = gps.beschleunigung()
     #df = gps.steigung()
     df = gps.himmelsrichtung()
-    print(df[["h_distance","geschw._m/s","ggeschw._m/s", "himmelsrichtung", "azimuth_deg"]].head(30))
+    #df = gps.wind()
+    print(df[["h_distance","geschw._m/s", "himmelsrichtung", "azimuth_deg" ]].head(30))
 
