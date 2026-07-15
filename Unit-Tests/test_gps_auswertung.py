@@ -128,3 +128,67 @@ def test_wind(monkeypatch, gps):
 
     assert all(df["wind_geschw"] == 5.5)
     assert all(df["wind_richtung_dg"] == 180)
+
+
+
+#---------------------Fehlerfälle testen----------------------
+
+# Datei existiert nicht
+def test_csv_read_file_not_found():
+    gps = GPSAuswertung("datei_gibt_es_nicht.csv")
+
+    with pytest.raises(FileNotFoundError):
+        gps.csv_read()
+
+
+# fehlende Spalten im df
+def test_prepare_data_missing_column():
+
+    df = pd.DataFrame({
+        "lat": [48],
+        "lon": [9],
+        "ele": [500],
+        # temperature fehlt
+        "time": ["2025-01-01"]
+    })
+
+    gps = GPSAuswertung(df)
+
+    with pytest.raises(ValueError, match="Fehlende Spalten"):
+        gps.prepare_data()
+
+
+# Ungültige Zeitwerte
+def test_prepare_data_invalid_time():
+
+    df = pd.DataFrame({
+        "lat":[48],
+        "lon":[9],
+        "ele":[500],
+        "temperature":[20],
+        "time":["das ist kein Datum"]
+    })
+
+    gps = GPSAuswertung(df)
+
+    result = gps.prepare_data()
+
+    assert result.empty
+
+
+# leerer df
+def test_prepare_data_empty_dataframe():
+
+    df = pd.DataFrame(columns=[
+        "lat",
+        "lon",
+        "ele",
+        "temperature",
+        "time"
+    ])
+
+    gps = GPSAuswertung(df)
+
+    result = gps.prepare_data()
+
+    assert result.empty
