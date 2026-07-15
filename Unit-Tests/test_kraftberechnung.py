@@ -100,6 +100,6 @@ def test_motorstrom(monkeypatch, kb):
     kb.drehmoment()
     df = kb.motorstrom()
 
-    erwartet = df["Drehmoment"] / 0.35
+    erwartet = df["Drehmoment"] / 1.5
 
     assert np.allclose(df["Motorstrom"], erwartet)
