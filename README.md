@@ -1,2 +1,2 @@
 # Abschlussprojekt_ar-tt
-EBike Simulator mit GPS Daten und simulierten Akkus
+Python-Anwendung zur Auslegung eines E-Bikes auf Basis realer GPS-Tracking-Daten. Basierend auf einem aufgezeichneten Fahrt-Datensatz mit Zeitstempel, Höhe, Position und Temperatur werden Geschwindigkeit, Beschleunigung, Steigung, Kraft, Leistung und Motorstrom berechnet und daraus die benötigte Motorleistung abgeleitet. Außerdem wird der Ladezustand (SoC) und Spannungsverlauf für zwei unterschiedliche Akku-Typen (LiPo und NMC) über die Fahrt simuliert und verglichen.
