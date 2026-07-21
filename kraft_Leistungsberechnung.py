@@ -22,16 +22,27 @@ class Kraftberechnung(GPSAuswertung):
         self.df["Luftwiderstandskraft"] = 0.5 * p * self.cW * (self.df["geschw._m/s"] ** 2)
         return self.df
     
+    def rollwiederstandskraft(self, rollwiederstandsbeiwert: float = 0.004):
+        if self.df is None or "steigung" not in self.df.columns:
+            self.steigung()
+
+        if self.df is None or "steigung" not in self.df.columns:
+            raise ValueError("Daten müssen mit steigung() vorbereitet werden, bevor rollwiederstandskraft() aufgerufen wird.")
+
+        self.df["rollwiderstandskraft"] = rollwiederstandsbeiwert * self.masse_kg * 9.81 * np.cos(self.df["steigung"])
+        return self.df
+    
     def kraft(self):
-        if self.df is None or "beschleunigung" not in self.df.columns or "steigung" not in self.df.columns or "Luftwiderstandskraft" not in self.df.columns:
+        if self.df is None or "beschleunigung" not in self.df.columns or "steigung" not in self.df.columns or "Luftwiderstandskraft" or "rollwiederstandskraft" not in self.df.columns:
             self.beschleunigung()
             self.steigung()
             self.luftwiderstandskraft()
+            self.rollwiederstandskraft()
 
         if self.df is None or "beschleunigung" not in self.df.columns:
-            raise ValueError("Daten müssen mit beschleunigung(), steigung() und luftwiderstandskraft() vorbereitet werden, bevor kraft() aufgerufen wird.")
+            raise ValueError("Daten müssen mit beschleunigung(), steigung(), rollwiederstandskraft() und luftwiderstandskraft() vorbereitet werden, bevor kraft() aufgerufen wird.")
 
-        self.df["Kraft"] = self.masse_kg * self.df["beschleunigung"] + self.masse_kg * 9.81 * np.sin(self.df["steigung"]) + self.df["Luftwiderstandskraft"]
+        self.df["Kraft"] = self.masse_kg * self.df["beschleunigung"] + self.masse_kg * 9.81 * np.sin(self.df["steigung"]) + self.df["Luftwiderstandskraft"] + self.df["rollwiederstandskraft"] 
         return self.df
     
     def leistung(self):
