@@ -22,32 +22,20 @@ def steigung_plt():
     df = gps.steigung()
     plotting_utils.plot_hoehenprofil_distanz(df)
 
-def leistung1_plt():
-    df = Kb1.leistung()
-    plotting_utils.plot_leistung_zeit(df)
-
-def leistung2_plt():
-    df = Kb2.leistung()
+def leistung_plt(Kraftberechnung):
+    df = Kraftberechnung.leistung()
     plotting_utils.plot_leistung_zeit(df)
 
 
 
-geschwindigkeit_plt(), beschleunigung_plt(), steigung_plt(), leistung1_plt(), leistung2_plt()
+geschwindigkeit_plt(), beschleunigung_plt(), steigung_plt(), leistung_plt(Kb1), leistung_plt(Kb2)
 plt.show(block=False)
 input("Enter drücken zum Schließen der Plots und Öffnen der Akku-Simulation...")
 plt.close("all")
 
 
-def battery1_plt(battery, battery_typ: str):
-    df = Kb1.motorstrom()
-    sim = BatterySimulator(battery)
-    sim.simulate(df)
-
-    plotting_utils.plot_soc_zeit(sim.zeit_verlauf, sim.soc_verlauf, battery_typ)
-    plotting_utils.plot_spannung_zeit(sim.zeit_verlauf, sim.spannung_verlauf, battery_typ)
-
-def battery2_plt(battery, battery_typ: str):
-    df = Kb2.motorstrom()
+def battery_plt(battery, battery_typ: str, Kraftberechnung):
+    df = Kraftberechnung.motorstrom()
     sim = BatterySimulator(battery)
     sim.simulate(df)
 
@@ -55,8 +43,9 @@ def battery2_plt(battery, battery_typ: str):
     plotting_utils.plot_spannung_zeit(sim.zeit_verlauf, sim.spannung_verlauf, battery_typ)
 
 
-battery1_plt(Battery_LiPo(capacity_nom_Ah_cell= 30.0), "LiPo"), battery1_plt(Battery_NMC(capacity_nom_Ah_cell=30.0), "NMC")
-battery2_plt(Battery_LiPo(capacity_nom_Ah_cell= 30.0), "LiPo"), battery2_plt(Battery_NMC(capacity_nom_Ah_cell= 30.0), "NMC")
+
+battery_plt(Battery_LiPo(capacity_nom_Ah_cell= 30.0), "LiPo", Kb1), battery_plt(Battery_NMC(capacity_nom_Ah_cell=30.0), "NMC", Kb1)
+battery_plt(Battery_LiPo(capacity_nom_Ah_cell= 30.0), "LiPo", Kb2), battery_plt(Battery_NMC(capacity_nom_Ah_cell=30.0), "NMC", Kb2)
 
 plt.show(block=False)
 input("Enter drücken zum Schließen der Plots...")

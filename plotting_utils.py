@@ -115,7 +115,7 @@ def plot_leistung_zeit(df, time_col="time", leistung_col="Leistung"):
 
     return ax
 
-def plot_soc_zeit(zeit, soc_verlauf, battery_typ):
+def plot_soc_zeit(zeit, soc_verlauf, battery_typ: str):
     """Plottet den State of Charge (SoC) über die Zeit.
 
     Parameters
@@ -124,6 +124,7 @@ def plot_soc_zeit(zeit, soc_verlauf, battery_typ):
         Zeitwerte (z.B. Fahrtzeit in Minuten seit Start).
     soc_verlauf : array-like
         SoC-Werte im Bereich [0, 1], z.B. BatterySimulator.soc_verlauf.
+    battery_typ : string der im plot zur beschriftung verwendet wird
 
     Returns
     -------
@@ -139,7 +140,7 @@ def plot_soc_zeit(zeit, soc_verlauf, battery_typ):
 
     return ax
 
-def plot_spannung_zeit(zeit, spannung_verlauf, battery_typ):
+def plot_spannung_zeit(zeit, spannung_verlauf, battery_typ: str):
     """Plottet den State of Charge (SoC) über die Zeit.
 
     Parameters
@@ -148,6 +149,7 @@ def plot_spannung_zeit(zeit, spannung_verlauf, battery_typ):
         Zeitwerte (z.B. Fahrtzeit in Minuten seit Start).
     spannung_verlauf : array-like
         Spannung-Werte über die Fahrt
+    battery_typ : string der im plot zur beschriftung verwendet wird
 
     Returns
     -------
