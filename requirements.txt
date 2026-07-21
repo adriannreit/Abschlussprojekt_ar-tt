@@ -1,0 +1,9 @@
+# Benötigte packages:
+numpy
+matplotlib
+pandas
+pathlib
+meteostat
+
+# Test-Abhängigkeiten
+pytest

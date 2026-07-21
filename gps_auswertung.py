@@ -23,7 +23,7 @@ class GPSAuswertung:
         self.time_col = None
         self.temp_col = None
 
-    def _resolve_path(self, path):
+    def resolve_path(self, path):
         if isinstance(path, Path):
             return path
 
@@ -37,7 +37,7 @@ class GPSAuswertung:
             self.df = self.gps_data.copy()
             return self.df
 
-        path = self._resolve_path(self.gps_data)
+        path = self.resolve_path(self.gps_data)
         if not path.exists():
             raise FileNotFoundError(f"Datei nicht gefunden: {path}")
 
