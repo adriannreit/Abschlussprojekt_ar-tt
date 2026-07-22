@@ -164,3 +164,28 @@ def plot_spannung_zeit(zeit, spannung_verlauf, battery_typ: str):
     ax.grid(True, alpha=0.3)
 
     return ax
+
+def plot_parameterstudie_vergleich(ergebnisse, wert_col="benoetigte_Ah", label_col=None):
+    """Plottet den Vergleich der verschiedenen Parametern für das Ebike.
+    
+    Parameters
+    ----------
+    ergebnisse : list
+        Parametersätze
+    wert_col : string 
+        Name der verwendeten Spalte. Standard ist ``"benoetigte_Ah"``.
+    label_col : string
+        Name der Spalte, deren Werte als Beschriftung der x-Achse verwendet
+        werden. Standart ist ``None``
+    """
+    if label_col is None:
+        label_col = ergebnisse.index.astype(str)
+    else:
+        label_col = ergebnisse[label_col]
+
+    _, ax = plt.subplots(figsize=(8, 4))
+    ax.bar(label_col.astype(str), ergebnisse[wert_col], color="tab:blue")
+    ax.set_ylabel(wert_col)
+    ax.set_title(f"Parametervergleich: {wert_col}")
+    ax.grid(True, axis="y", alpha=0.3)
+    return ax

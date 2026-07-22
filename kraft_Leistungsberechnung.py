@@ -22,14 +22,14 @@ class Kraftberechnung(GPSAuswertung):
         self.df["Luftwiderstandskraft"] = 0.5 * p * self.cW * (self.df["geschw._m/s"] ** 2)
         return self.df
     
-    def rollwiderstandskraft(self, rollwiederstandsbeiwert: float = 0.004):
+    def rollwiderstandskraft(self, rollwiderstandsbeiwert: float = 0.004):
         if self.df is None or "steigung" not in self.df.columns:
             self.steigung()
 
         if self.df is None or "steigung" not in self.df.columns:
             raise ValueError("Daten müssen mit steigung() vorbereitet werden, bevor rollwiderstandskraft() aufgerufen wird.")
 
-        self.df["rollwiderstandskraft"] = rollwiederstandsbeiwert * self.masse_kg * 9.81 * np.cos(self.df["steigung"])
+        self.df["rollwiderstandskraft"] = rollwiderstandsbeiwert * self.masse_kg * 9.81 * np.cos(self.df["steigung"])
         return self.df
     
     def kraft(self):

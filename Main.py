@@ -5,10 +5,18 @@ from kraft_Leistungsberechnung import Kraftberechnung
 from Battery.battery_simulator import BatterySimulator
 from Battery.battery_LiPo import Battery_LiPo
 from Battery.battery_NMC import Battery_NMC
+from parameterstudie import parameterstudie
 
 gps = GPSAuswertung("final_project_input_data.csv")
 Kb1 = Kraftberechnung("final_project_input_data.csv")
-Kb2 = Kraftberechnung("final_project_input_data.csv", 100, 0.5625 , 29)
+
+parametersaetze = [
+    {"masse_kg": 80,  "cW": 0.5625, "rad": 27},
+    {"masse_kg": 100, "cW": 0.5625, "rad": 27},
+    {"masse_kg": 80,  "cW": 0.40,   "rad": 27},
+    {"masse_kg": 80,  "cW": 0.5625, "rad": 29},
+]
+
 
 def geschwindigkeit_plt():
     df = gps.geschwindigkeit()
@@ -28,11 +36,13 @@ def leistung_plt(Kraftberechnung):
 
 
 
-geschwindigkeit_plt(), beschleunigung_plt(), steigung_plt(), leistung_plt(Kb1), leistung_plt(Kb2)
+geschwindigkeit_plt(), beschleunigung_plt(), steigung_plt(), leistung_plt(Kb1), #leistung_plt(Kb2)
 plt.show(block=False)
 input("Enter drücken zum Schließen der Plots und Öffnen der Akku-Simulation...")
 plt.close("all")
 
+
+#--------------------Battery Simulation--------------------------------
 
 def battery_plt(battery, battery_typ: str, Kraftberechnung):
     df = Kraftberechnung.motorstrom()
@@ -44,8 +54,19 @@ def battery_plt(battery, battery_typ: str, Kraftberechnung):
 
 
 
-battery_plt(Battery_LiPo(capacity_nom_Ah_cell= 30.0), "LiPo", Kb1), battery_plt(Battery_NMC(capacity_nom_Ah_cell=30.0), "NMC", Kb1)
-battery_plt(Battery_LiPo(capacity_nom_Ah_cell= 30.0), "LiPo", Kb2), battery_plt(Battery_NMC(capacity_nom_Ah_cell=30.0), "NMC", Kb2)
+battery_plt(Battery_LiPo(capacity_nom_Ah_cell= 32.0), "LiPo", Kb1), battery_plt(Battery_NMC(capacity_nom_Ah_cell=32.0), "NMC", Kb1)
+
+plt.show(block=False)
+input("Enter drücken zum Schließen der Plots und öffnen der Parameterstudie...")
+plt.close("all")
+
+
+#------------------------Parameterstudie-----------------------
+
+ergebnisse = parameterstudie("final_project_input_data.csv", parametersaetze, Battery_LiPo)
+print(ergebnisse)
+
+plotting_utils.plot_parameterstudie_vergleich(ergebnisse)
 
 plt.show(block=False)
 input("Enter drücken zum Schließen der Plots...")
