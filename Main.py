@@ -63,10 +63,13 @@ plt.close("all")
 
 #------------------------Parameterstudie-----------------------
 
-ergebnisse = parameterstudie("final_project_input_data.csv", parametersaetze, Battery_LiPo)
-print(ergebnisse)
+ergebnisse_LiPo = parameterstudie("final_project_input_data.csv", parametersaetze, Battery_LiPo)
+ergebnisse_NMC = parameterstudie("final_project_input_data.csv", parametersaetze, Battery_NMC)
+print(ergebnisse_LiPo)
+print(ergebnisse_NMC)
 
-plotting_utils.plot_parameterstudie_vergleich(ergebnisse)
+plotting_utils.plot_parameterstudie_vergleich(ergebnisse_LiPo, "LiPo")
+plotting_utils.plot_parameterstudie_vergleich(ergebnisse_NMC, "NMC")
 
 plt.show(block=False)
 input("Enter drücken zum Schließen der Plots...")
