@@ -177,8 +177,8 @@ class GPSAuswertung:
 if __name__ == "__main__":
     gps = GPSAuswertung("final_project_input_data.csv")
     df = gps.geschwindigkeit()
-    #df = gps.beschleunigung()
-    #df = gps.steigung()
+    df = gps.beschleunigung()
+    df = gps.steigung()
     df = gps.himmelsrichtung()
     #df = gps.wind()
     print(df[["h_distance","geschw._m/s", "himmelsrichtung", "azimuth_deg" ]].head(30))
