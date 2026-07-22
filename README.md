@@ -35,8 +35,9 @@ Nach Ausführung werden die GPS-Daten aus `final_project_input_data.csv` ausgele
 1. **Kinematik** (`GPSAuswertung`): Geschwindigkeit, Beschleunigung, Steigung, Höhenprofil – geglättet über einen gleitenden Mittelwert, um GPS-Messrauschen auszugleichen.
 2. **Kräfte & Leistung** (`Kraftberechnung`, erbt von `GPSAuswertung`): Luftwiderstand, Antriebskraft (Beschleunigung + Steigung + Luftwiderstand), mechanische Leistung, Drehmoment und daraus der Motorstrom.
 3. **Batteriesimulation** (`BatterySimulator`): wendet das Motorstrom-Profil Zeitschritt für Zeitschritt auf ein `Battery_LiPo`- bzw. `Battery_NMC`-Objekt an und zeichnet SoC- und Spannungsverlauf auf.
+4. **Parameterstudie** (`parameterstudie`): bekommt verschiedene Parameter für unterschiedliche Ebike-Typen übergeben und berechnet daraus die benötigten Amperestunden und den maximalen Motorstrom, welche anschließend in einem Balkendiagramm dargestellt werden 
 
-Anschließend werden die Plots für Geschwindigkeit, Beschleunigung, Höhenprofil und Leistung angezeigt – `Enter` im Terminal schließt sie. Danach folgen die Plots für SoC und Spannung der beiden Akku-Typen im Vergleich.
+Anschließend werden die Plots für Geschwindigkeit, Beschleunigung, Höhenprofil und Leistung angezeigt – `Enter` im Terminal schließt sie. Danach folgen die Plots für SoC und Spannung der beiden Akku-Typen im Vergleich. Abschließend wird die Parameterstudie durchgeführt, wobei anhand einer Tabelle und einem Balkendiagramm die Auswirkungen der verschiedenen Parametern verglichen werden können.
 
 ## Projektstruktur
 
@@ -47,6 +48,7 @@ Anschließend werden die Plots für Geschwindigkeit, Beschleunigung, Höhenprofi
 ├── geo_utils.py                     # Zustandslose geometrische Hilfsfunktionen
 ├── kraft_Leistungsberechnung.py     # Kraftberechnung(GPSAuswertung): Kraft/Leistung/Motorstrom
 ├── luftdruckberechnung.py           # Luftdichte in Abhängigkeit von Höhe & Temperatur
+├── parameterstudie.py				 # Vergleich von verschiedenen Ebike-Parametern
 ├── plotting_utils.py                # Plot-Funktionen (Geschwindigkeit, SoC, Höhenprofil, ...)
 ├── requirements.txt                 # Benötigte Python-Pakete
 ├── Battery/
@@ -77,6 +79,7 @@ Anschließend werden die Plots für Geschwindigkeit, Beschleunigung, Höhenprofi
 
 * **Glättung der Kinematik** (`geo_utils.moving_average`): Geschwindigkeit, Beschleunigung und Steigung werden über ein gleitendes Fenster geglättet, um Rauschen aus unregelmäßigen GPS-Zeitstempeln (z. B. sehr kleine Zeitabstände zwischen aufeinanderfolgenden Punkten) auszugleichen, das sonst zu unrealistischen Beschleunigungs-/Kraftspitzen führt.
 * **Himmelsrichtungs-/Windauswertung** (`geo_utils.himmelsrichtung`, `GPSAuswertung.wind`): Berechnung von Azimut und Himmelsrichtung zwischen GPS-Punkten sowie optionaler Abgleich mit historischen Winddaten über die `meteostat`-Bibliothek.
+* **Parameterstudie** (`parameterstudie`): Auswirkung von verschiedenen Parametern bei unterschiedlichen Ebike-Typen auf den Motorstrom und die Akkukapazität werden verglichen.
 * <span style="color:red">TODO: Erweiterungen ergänzen!!! </span>
 
 ## Quellen
@@ -87,7 +90,7 @@ Anschließend werden die Plots für Geschwindigkeit, Beschleunigung, Höhenprofi
 
 ## Ergebnisse
 
-<span style="color:red"><TODO: Kurze Zusammenfassung der Simulationsergebnisse ergänzen, z. B.:> </span>
+<span style="color:red">TODO: Kurze Zusammenfassung der Simulationsergebnisse ergänzen, z. B.:</span>
 
 * Zurückgelegte Strecke, Fahrtdauer, Durchschnittsgeschwindigkeit
 * Ermittelte benötigte Batteriekapazität für die Fahrt
@@ -95,7 +98,7 @@ Anschließend werden die Plots für Geschwindigkeit, Beschleunigung, Höhenprofi
 
 ## Tests
 
-Die Module `gps_auswertung` und `kraft_leistungsberechnung` sind mit Unit-Tests versehen, die verschiedene Funktionen auf ihre korrekte Funktionalität prüfen. Für `Battery`/`BatterySimulator` <ergänzen: sind ebenfalls getestet / sind aktuell noch nicht mit Unit-Tests versehen>.
+Die Module `gps_auswertung` und `kraft_leistungsberechnung` sind mit Unit-Tests versehen, die verschiedene Funktionen auf ihre korrekte Funktionalität prüfen. 
 
 Die Tests lassen sich wie folgt ausführen:
 
