@@ -85,6 +85,11 @@ def wetter_daten_auslesen(lat, lon, timestamp):
 
 def debug_wetterabfrage(lat, lon, timestamp):
     """Debug-Funktion zur Wetterdatenabfrage mit Meteostat."""
+    if not METEOSTAT_VERFUEGBAR:
+        raise RuntimeError(
+            "meteostat ist nicht verfügbar/kompatibel - Windauswertung deaktiviert."
+        )
+
     print("\n" + "="*50)
     print("DEBUG: Wetterabfrage gestartet")
     print("="*50)
