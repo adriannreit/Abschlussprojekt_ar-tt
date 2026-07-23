@@ -1,7 +1,11 @@
 """Geometrische Hilfsfunktionen zur Berechnung der Geschwindigkeit, Distanz und Steigungswinkel anhand von GPS-Daten"""
 import numpy as np
 import pandas as pd
-from meteostat import Point, hourly, Station
+try:
+    from meteostat import Point, hourly, Station
+    METEOSTAT_VERFUEGBAR = True
+except ImportError:
+    METEOSTAT_VERFUEGBAR = False
 
 earth_radius_m = 6371000
 
@@ -49,6 +53,11 @@ def moving_average(values: pd.Series, window_size: int = 5) -> pd.Series:
 
 def wetter_daten_auslesen(lat, lon, timestamp):
     """Liest Wetterdaten für einen einzelnen GPS-Punkt und einen einzelnen Zeitpunkt aus."""
+    if not METEOSTAT_VERFUEGBAR:
+        raise RuntimeError(
+            "meteostat ist nicht verfügbar/kompatibel - Windauswertung deaktiviert."
+        )
+
     location = Point(float(lat), float(lon))
 
     if pd.isna(timestamp):

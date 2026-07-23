@@ -80,8 +80,22 @@ Anschließend werden die Plots für Geschwindigkeit, Beschleunigung, Höhenprofi
 * **Glättung der Kinematik** (`geo_utils.moving_average`): Geschwindigkeit, Beschleunigung und Steigung werden über ein gleitendes Fenster geglättet, um Rauschen aus unregelmäßigen GPS-Zeitstempeln (z. B. sehr kleine Zeitabstände zwischen aufeinanderfolgenden Punkten) auszugleichen, das sonst zu unrealistischen Beschleunigungs-/Kraftspitzen führt.
 * **Himmelsrichtungs-/Windauswertung** (`geo_utils.himmelsrichtung`, `GPSAuswertung.wind`): Berechnung von Azimut und Himmelsrichtung zwischen GPS-Punkten sowie optionaler Abgleich mit historischen Winddaten über die `meteostat`-Bibliothek.
 * **Parameterstudie** (`parameterstudie`): Auswirkung von verschiedenen Parametern bei unterschiedlichen Ebike-Typen auf den Motorstrom und die Akkukapazität werden verglichen.
-* **Unit-Tests** (`test_gps_auswertung`, `test_kraftberechnung` ): Test von verschiedenen Funktionen der Klassen `gps_auswertung` und `kraft_Leistungsberechnung`. Die Funktionen werden auf ihre Rückgabewerte geprüft, wobei auch verschiedene Fehler geprüft werden.
-* <span style="color:red">TODO: Erweiterungen ergänzen!!! </span>
+* **Unit-Tests** (`test_gps_auswertung`, `test_kraftberechnung` ): Test von verschiedenen Funktionen der Klassen `gps_auswertung` und `kraft_Leistungsberechnung`. Die Funktionen werde
+* n auf ihre Rückgabewerte geprüft, wobei auch verschiedene Fehler geprüft werden.
+* **Luftwiderstandsberechnung**  (`kraft_leistungsberechnung`): Berechnung des Luftwiderstands in Abhängigkeit der Meereshöhe und der Lufttemperatur.
+* **Berechnung des Rollwiderstand** (`kraft_leistungsberechnung`): Berechnung des Rollwiderstands anhand der Masse und der Steigung.
+* **Git commits nach conventional commits**: Umsetzung der commit-messages nach conventional commits.
+* **Windauswertung (nicht aktiv)**: `geo_utils.wetter_daten_auslesen()` und
+  `GPSAuswertung.wind()` implementieren den Abruf historischer Windgeschwindigkeit
+  und -richtung über die `meteostat`-Bibliothek für jeden GPS-Punkt/Zeitstempel.
+  Ziel war, den Wind als Gegen-/Rückenwind-Komponente in die
+  Luftwiderstandsberechnung (`Kraftberechnung.luftwiderstandskraft()`) einfließen
+  zu lassen, statt nur mit der Fahrgeschwindigkeit relativ zur Luft zu rechnen.
+  Der Abruf schlägt bei uns aktuell fehl (vermutlich eine
+  Kompatibilitätsproblem zwischen `meteostat` und unserer Python-Version, nicht
+  ein Fehler in der Anfrage-Logik selbst). Aus Zeitgründen wurde dies nicht weiter
+  verfolgt; die Funktion ist daher im normalen Programmablauf nicht eingebunden
+  und beeinflusst die Ausführung nicht.
 
 ## Quellen
 
